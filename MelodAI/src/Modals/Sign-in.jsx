@@ -1,65 +1,109 @@
-import { useState } from "react"
+import { useState } from "react";
 
-export function SignIn(){
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  async function onsubmit(){
-    e.preventDefault();
-    try {
-      const result = fetch("http://localhost:3000/api/signin",{
-        method: POST,
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(email,password)
-      })
-      if(!result.ok){
-        throw new Error("Server Error");
-      }
-      const data = await result.json();
-    } catch (error) {
-      
+export function SignIn({ onSwitchToRegister, onSuccess }) {
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const API_BASE = import.meta.env.VITE_HTTP;
+
+    async function onSubmit(e) {
+        e.preventDefault();
+        setError(null);
+        setLoading(true);
+
+        try {
+            // 👈 Updated endpoint from /signin to /login to match Usercontroller.java
+            const response = await fetch(`${API_BASE}/api/user/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(errText || "Invalid username or password.");
+            }
+
+            const data = await response.json();
+            
+            // Save the token to local storage (adjust based on whether your backend returns a map or string token)
+            localStorage.setItem("token", data.token || data.accessToken || data); 
+
+            if (onSuccess) onSuccess();
+            
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     }
-  }
+
     return (
- <div className="flex min-h-screen w-full items-center justify-center bg-white/40 px-6 py-12 lg:px-8">
-<div class="backdrop-blur-md shadow-xl flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 w-fit h-fit  items-center">
-  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-    <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" class="mx-auto h-10 w-auto" />
-    <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-black">Sign in to your account</h2>
-  </div>
+        <div className="bg-white px-8 py-8 w-full">
+            {/* Header */}
+            <div className="text-center mb-6">
+                <div className="w-10 h-10 rounded-xl bg-violet-600 flex items-center justify-center text-white font-bold text-lg mx-auto shadow-sm mb-3">
+                    M
+                </div>
+                <h2 className="text-xl font-bold tracking-tight text-slate-900">Welcome back to MelodAI</h2>
+                <p className="text-xs text-slate-500 mt-1">Sign in to access your AI music studio</p>
+            </div>
 
-  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-    <form action="#" method="POST" class="space-y-6" onSubmit={onsubmit}>
-      <div>
-        <label for="email" class="block text-sm/6 font-medium text-black">Email address</label>
-        <div class="mt-2">
-          <input onChange={(e)=>setEmail(e.target.value)} id="email" type="email" name="email" required autocomplete="email" class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-black border-black border-2 outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6" />
+            {error && (
+                <div className="mb-4 p-3 text-xs font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-lg text-center">
+                    {error}
+                </div>
+            )}
+
+            <form onSubmit={onSubmit} className="space-y-4">
+                <div>
+                    <label htmlFor="username" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Username</label>
+                    <input 
+                        onChange={(e) => setUsername(e.target.value)} 
+                        id="username" 
+                        type="text" 
+                        required 
+                        autoComplete="username" 
+                        placeholder="johndoe"
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all" 
+                    />
+                </div>
+
+                <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                        <label htmlFor="password" className="block text-xs font-semibold uppercase tracking-wider text-slate-700">Password</label>
+                    </div>
+                    <input 
+                        onChange={(e) => setPassword(e.target.value)} 
+                        id="password" 
+                        type="password" 
+                        required 
+                        autoComplete="current-password" 
+                        placeholder="••••••••"
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all" 
+                    />
+                </div>
+
+                <button 
+                    type="submit" 
+                    disabled={loading}
+                    className="w-full mt-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-medium py-2.5 text-sm shadow-xs transition-all duration-200 cursor-pointer disabled:opacity-50"
+                >
+                    {loading ? "Signing in..." : "Sign In"}
+                </button>
+            </form>
+
+            <p className="mt-6 text-center text-xs text-slate-500">
+                Don't have an account?{' '}
+                <button 
+                    type="button" 
+                    onClick={onSwitchToRegister} 
+                    className="font-semibold text-violet-600 hover:text-violet-700 cursor-pointer bg-transparent border-none p-0"
+                >
+                    Register Now
+                </button>
+            </p>
         </div>
-      </div>
-
-      <div>
-        <div class="flex items-center justify-between">
-          <label for="password" class="block text-sm/6 font-medium text-black">Password</label>
-          <div class="text-sm">
-            <a href="#" class="font-semibold text-indigo-400 hover:text-indigo-300">Forgot password?</a>
-          </div>
-        </div>
-        <div class="mt-2">
-          <input onChange={(e)=> setPassword(e.target.value)} id="password" type="password" name="password" required autocomplete="current-password" class="block w-full rounded-md border-2 border-black bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6" />
-        </div>
-      </div>
-
-      <div>
-        <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Sign in</button>
-      </div>
-    </form>
-
-    <p class="mt-10 text-center text-sm/6 text-gray-400">
-      Not a member?
-      <a href="#" class="font-semibold text-indigo-400 hover:text-indigo-300">Register Now!</a>
-    </p>
-  </div>
-</div>
-</div>
-    )
-
+    );
 }
