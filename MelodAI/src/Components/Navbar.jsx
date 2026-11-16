@@ -4,14 +4,42 @@ import { SignIn } from "../Modals/Sign-in";
 import { Register } from "../Modals/Register";
 
 export function Navbar() {
+  console.log("NEW NAVBAR VERSION LOADED");
   const [isLogged, setIsLogged] = useState(!!localStorage.getItem("token"));
   const [credits, setCredits] = useState(150); // Example initial credits
   const [activeModal, setActiveModal] = useState(null); // 'signin', 'register', or null
 
-  const handleLogOut = () => {
-    localStorage.removeItem("token");
-    setIsLogged(false);
-    window.location.href = "/"; // Return to home on logout
+  const handleLogOut = async () => {
+    try {
+      
+      alert("C");
+      const token = localStorage.getItem("token");
+      
+      console.log("Logout triggered. Token found:", token ? "Yes" : "No");
+      const API_BASE = import.meta.env.VITE_HTTP || "http://localhost:8081";
+
+
+      if (token) {
+        const response = await fetch(`${API_BASE}/api/user/logout`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        console.log("Logout backend response status:", response.status);
+        const text = await response.text();
+        console.log("Logout backend response body:", text);
+        
+      alert("Log-out");
+      }
+    } catch (err) {
+      console.error("Logout backend call failed with error:", err);
+    } finally {
+      localStorage.removeItem("token");
+      setIsLogged(false);
+      window.location.href = "/";
+    }
   };
 
   return (
@@ -72,8 +100,12 @@ export function Navbar() {
           <div>
             {isLogged ? (
               <button
-                onClick={handleLogOut}
-                className="px-5 py-1.5 rounded-full transition-colors text-xs font-semibold cursor-pointer border border-slate-300 bg-white hover:bg-slate-50 text-slate-700"
+                onClick={() => {
+                  alert("A");
+                  console.log("Logout button clicked!");
+                  handleLogOut();
+                  alert("B");
+                }}
               >
                 Logout
               </button>
@@ -106,8 +138,14 @@ export function Navbar() {
               <SignIn
                 onSwitchToRegister={() => setActiveModal("register")}
                 onSuccess={() => {
+                  alert("Navbar callback executed!");
+
+                  console.log("Before update:", isLogged);
+
                   setIsLogged(true);
                   setActiveModal(null);
+
+                  console.log("Navbar callback completed!");
                 }}
               />
             )}
