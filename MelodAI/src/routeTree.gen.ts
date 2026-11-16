@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as CheckoutRouteImport } from './routes/Checkout'
+import { Route as CreateMusicRouteImport } from './routes/CreateMusic'
 import { Route as DashboardRouteImport } from './routes/Dashboard'
 import { Route as MusicRouteImport } from './routes/Music'
 
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/Checkout',
   path: '/Checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreateMusicRoute = CreateMusicRouteImport.update({
+  id: '/CreateMusic',
+  path: '/CreateMusic',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -31,30 +37,34 @@ const MusicRoute = MusicRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/Checkout': typeof CheckoutRoute
+  '/CreateMusic': typeof CreateMusicRoute
   '/Dashboard': typeof DashboardRoute
   '/Music': typeof MusicRoute
 }
 export interface FileRoutesByTo {
   '/Checkout': typeof CheckoutRoute
+  '/CreateMusic': typeof CreateMusicRoute
   '/Dashboard': typeof DashboardRoute
   '/Music': typeof MusicRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/Checkout': typeof CheckoutRoute
+  '/CreateMusic': typeof CreateMusicRoute
   '/Dashboard': typeof DashboardRoute
   '/Music': typeof MusicRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/Checkout' | '/Dashboard' | '/Music'
+  fullPaths: '/Checkout' | '/CreateMusic' | '/Dashboard' | '/Music'
   fileRoutesByTo: FileRoutesByTo
-  to: '/Checkout' | '/Dashboard' | '/Music'
-  id: '__root__' | '/Checkout' | '/Dashboard' | '/Music'
+  to: '/Checkout' | '/CreateMusic' | '/Dashboard' | '/Music'
+  id: '__root__' | '/Checkout' | '/CreateMusic' | '/Dashboard' | '/Music'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRoute
+  CreateMusicRoute: typeof CreateMusicRoute
   DashboardRoute: typeof DashboardRoute
   MusicRoute: typeof MusicRoute
 }
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/Checkout'
       fullPath: '/Checkout'
       preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/CreateMusic': {
+      id: '/CreateMusic'
+      path: '/CreateMusic'
+      fullPath: '/CreateMusic'
+      preLoaderRoute: typeof CreateMusicRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/Dashboard': {
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRoute,
+  CreateMusicRoute: CreateMusicRoute,
   DashboardRoute: DashboardRoute,
   MusicRoute: MusicRoute,
 }
