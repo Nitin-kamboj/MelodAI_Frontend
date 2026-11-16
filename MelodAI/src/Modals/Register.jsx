@@ -31,8 +31,6 @@ export function Register({ onSwitchToSignIn, onSuccess }) {
                 const errorData = await response.text();
                 throw new Error(errorData || "Registration failed. Username or email may already be in use.");
             }
-
-            alert("Registration successful! Please sign in.");
             if (onSuccess) onSuccess();
         } catch (err) {
             setError(err.message);

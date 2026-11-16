@@ -71,7 +71,6 @@ export function Dashboard() {
             })
             .catch((err) => {
                 console.error("Playback failed:", err);
-                alert("Could not play audio track.");
             });
 
         // When track finishes playing naturally, reset state
@@ -81,7 +80,7 @@ export function Dashboard() {
     };
 
     const handleCreateMusic = () => {
-        alert("Redirecting to Music Creation / Generation Studio...");
+        // alert("Redirecting to Music Creation / Generation Studio...");
     };
 
     if (loading) {
