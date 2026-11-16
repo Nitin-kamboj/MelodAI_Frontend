@@ -30,7 +30,6 @@ export function SignIn({ onSwitchToRegister, onSuccess }) {
 
       // Save the token to local storage (adjust based on whether your backend returns a map or string token)
       localStorage.setItem("token", data.token || data.accessToken || data);
-      alert("123");
       console.log("onSuccess value:", onSuccess);
       console.log("onSuccess type:", typeof onSuccess);
 
