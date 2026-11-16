@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/Music')({
   component: Music,
@@ -10,6 +10,7 @@ export function Music() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [playingId, setPlayingId] = useState(null);
+    const navigate = useNavigate();
 
     // Fallback directly to your backend port if env isn't defined
     const API_BASE = import.meta.env.VITE_HTTP;
@@ -18,6 +19,7 @@ export function Music() {
         const fetchUserLibrary = async () => {
             try {
                 const token = localStorage.getItem("token"); // Retrieve JWT token
+                console.log("Sending token:", token); // 👈 Check console to see if token exists
                 const response = await fetch(`${API_BASE}/api/music/my-library`, {
                     headers: {
                         "Authorization": `Bearer ${token}`
@@ -52,7 +54,8 @@ export function Music() {
 
     const handleCreateMusic = () => {
         // Redirect or trigger your creation studio modal/page here
-        alert("Redirecting to Music Creation Studio...");
+        // alert("Redirecting to Music Creation Studio...");
+        navigate({ to: '/CreateMusic' });
     };
 
     if (loading) {
