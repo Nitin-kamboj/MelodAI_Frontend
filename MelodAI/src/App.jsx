@@ -13,6 +13,7 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
+    // this is not of use because I'm using tanstack router and main.jsx directly look into the __root for routes.
     <div>
     <Navbar/>
     <Dashboard/>
