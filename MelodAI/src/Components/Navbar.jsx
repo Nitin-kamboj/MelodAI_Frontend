@@ -11,8 +11,6 @@ export function Navbar() {
 
   const handleLogOut = async () => {
     try {
-      
-      alert("C");
       const token = localStorage.getItem("token");
       
       console.log("Logout triggered. Token found:", token ? "Yes" : "No");
@@ -30,8 +28,6 @@ export function Navbar() {
         console.log("Logout backend response status:", response.status);
         const text = await response.text();
         console.log("Logout backend response body:", text);
-        
-      alert("Log-out");
       }
     } catch (err) {
       console.error("Logout backend call failed with error:", err);
@@ -101,10 +97,8 @@ export function Navbar() {
             {isLogged ? (
               <button
                 onClick={() => {
-                  alert("A");
                   console.log("Logout button clicked!");
                   handleLogOut();
-                  alert("B");
                 }}
               >
                 Logout
@@ -138,7 +132,6 @@ export function Navbar() {
               <SignIn
                 onSwitchToRegister={() => setActiveModal("register")}
                 onSuccess={() => {
-                  alert("Navbar callback executed!");
 
                   console.log("Before update:", isLogged);
 
