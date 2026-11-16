@@ -57,7 +57,7 @@ export function Navbar() {
         <div className="flex items-center space-x-6 text-slate-600 font-medium text-sm">
           {/* Navigation Links using TanStack Router */}
           <Link
-            to="/"
+            to="/dashboard"
             className="hover:text-slate-950 transition-colors [&.active]:text-violet-600"
           >
             Home
