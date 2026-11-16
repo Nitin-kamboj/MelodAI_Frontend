@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as CheckoutRouteImport } from './routes/Checkout'
 import { Route as CreateMusicRouteImport } from './routes/CreateMusic'
 import { Route as DashboardRouteImport } from './routes/Dashboard'
 import { Route as MusicRouteImport } from './routes/Music'
 
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/Checkout',
   path: '/Checkout',
@@ -36,12 +42,14 @@ const MusicRoute = MusicRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
   '/Checkout': typeof CheckoutRoute
   '/CreateMusic': typeof CreateMusicRoute
   '/Dashboard': typeof DashboardRoute
   '/Music': typeof MusicRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/Checkout': typeof CheckoutRoute
   '/CreateMusic': typeof CreateMusicRoute
   '/Dashboard': typeof DashboardRoute
@@ -49,6 +57,7 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/Checkout': typeof CheckoutRoute
   '/CreateMusic': typeof CreateMusicRoute
   '/Dashboard': typeof DashboardRoute
@@ -56,13 +65,14 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/Checkout' | '/CreateMusic' | '/Dashboard' | '/Music'
+  fullPaths: '/' | '/Checkout' | '/CreateMusic' | '/Dashboard' | '/Music'
   fileRoutesByTo: FileRoutesByTo
-  to: '/Checkout' | '/CreateMusic' | '/Dashboard' | '/Music'
-  id: '__root__' | '/Checkout' | '/CreateMusic' | '/Dashboard' | '/Music'
+  to: '/' | '/Checkout' | '/CreateMusic' | '/Dashboard' | '/Music'
+  id: '__root__' | '/' | '/Checkout' | '/CreateMusic' | '/Dashboard' | '/Music'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   CheckoutRoute: typeof CheckoutRoute
   CreateMusicRoute: typeof CreateMusicRoute
   DashboardRoute: typeof DashboardRoute
@@ -71,6 +81,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/Checkout': {
       id: '/Checkout'
       path: '/Checkout'
@@ -103,6 +120,7 @@ declare module '@tanstack/react-router' {
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   CheckoutRoute: CheckoutRoute,
   CreateMusicRoute: CreateMusicRoute,
   DashboardRoute: DashboardRoute,
