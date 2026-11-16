@@ -19,7 +19,6 @@ export function Music() {
         const fetchUserLibrary = async () => {
             try {
                 const token = localStorage.getItem("token"); // Retrieve JWT token
-                console.log("Sending token:", token); // 👈 Check console to see if token exists
                 const response = await fetch(`${API_BASE}/api/music/my-library`, {
                     headers: {
                         "Authorization": `Bearer ${token}`

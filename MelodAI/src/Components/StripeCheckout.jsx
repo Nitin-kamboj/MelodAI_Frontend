@@ -10,11 +10,6 @@ export function StripeCheckout() {
     setError(null);
 
     const token = localStorage.getItem("token");
-    console.log("Token retrieved:", token);
-    console.log(
-      "Target URL:",
-      `${API_BASE}/api/payment/create-checkout-session`,
-    );
 
     try {
       const response = await fetch(
@@ -29,19 +24,14 @@ export function StripeCheckout() {
         },
       );
 
-      // 👇 Log the exact status code from the server response
-      console.log("Response status:", response.status, response.statusText);
-
       if (!response.ok) {
         const errorText = await response.text();
-        console.log("Error body:", errorText);
         throw new Error(
           `Server returned status ${response.status}: ${errorText || "Failed to initialize Stripe checkout session."}`,
         );
       }
 
       const data = await response.json();
-      console.log("Stripe response data:", data); // Check your console to see the exact keys
 
       const redirectUrl = data.url || data.checkoutUrl;
 
