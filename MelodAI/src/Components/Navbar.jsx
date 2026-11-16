@@ -5,7 +5,6 @@ import { Register } from "../Modals/Register";
 import { RefreshToken } from "../utils/RefreshAccessToken";
 
 export function Navbar() {
-  console.log("NEW NAVBAR VERSION LOADED");
   const [isLogged, setIsLogged] = useState(!!localStorage.getItem("token"));
   const [credits, setCredits] = useState(); // Example initial credits
   const [activeModal, setActiveModal] = useState(null); // 'signin', 'register', or null
@@ -16,7 +15,6 @@ export function Navbar() {
     try {
       const token = localStorage.getItem("token");
       
-      console.log("Logout triggered. Token found:", token ? "Yes" : "No");
 
 
       if (token) {
@@ -27,9 +25,7 @@ export function Navbar() {
           },
         });
 
-        console.log("Logout backend response status:", response.status);
         const text = await response.text();
-        console.log("Logout backend response body:", text);
       }
     } catch (err) {
       console.error("Logout backend call failed with error:", err);
@@ -155,7 +151,6 @@ export function Navbar() {
               <button
               className="px-5 py-1.5 rounded-full transition-colors text-xs font-semibold cursor-pointer bg-violet-600 hover:bg-violet-700 text-white shadow-xs"
                 onClick={() => {
-                  console.log("Logout button clicked!");
                   handleLogOut();
                 }}
               >
@@ -190,13 +185,8 @@ export function Navbar() {
               <SignIn
                 onSwitchToRegister={() => setActiveModal("register")}
                 onSuccess={() => {
-
-                  console.log("Before update:", isLogged);
-
                   setIsLogged(true);
                   setActiveModal(null);
-
-                  console.log("Navbar callback completed!");
                 }}
               />
             )}
