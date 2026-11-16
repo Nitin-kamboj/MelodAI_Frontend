@@ -1,20 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { SignIn } from "../Modals/Sign-in";
 import { Register } from "../Modals/Register";
+import { RefreshToken } from "../utils/RefreshAccessToken";
 
 export function Navbar() {
   console.log("NEW NAVBAR VERSION LOADED");
   const [isLogged, setIsLogged] = useState(!!localStorage.getItem("token"));
-  const [credits, setCredits] = useState(150); // Example initial credits
+  const [credits, setCredits] = useState(); // Example initial credits
   const [activeModal, setActiveModal] = useState(null); // 'signin', 'register', or null
+  
+  const API_BASE = import.meta.env.VITE_HTTP || "http://localhost:8081";
 
   const handleLogOut = async () => {
     try {
       const token = localStorage.getItem("token");
       
       console.log("Logout triggered. Token found:", token ? "Yes" : "No");
-      const API_BASE = import.meta.env.VITE_HTTP || "http://localhost:8081";
 
 
       if (token) {
@@ -33,10 +35,65 @@ export function Navbar() {
       console.error("Logout backend call failed with error:", err);
     } finally {
       localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
       setIsLogged(false);
       window.location.href = "/";
     }
   };
+
+  useEffect(() => {
+    const syncAuthAndCredits = async () => {
+      let token = localStorage.getItem("token");
+      const refreshToken = localStorage.getItem("refreshToken");
+
+      if (!token && !refreshToken) {
+        setIsLogged(false);
+        setCredits(0);
+        return;
+      }
+
+      try {
+        // 1. Only refresh immediately if the access token is completely missing
+        if (!token && refreshToken) {
+          token = await RefreshToken();
+        }
+
+        // 2. Try fetching credits with the current access token first
+        let response = await fetch(`${API_BASE}/api/credits`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // 3. Only call RefreshToken() if the backend rejected the token (401)
+        if (response.status === 401 && refreshToken) {
+          token = await RefreshToken();
+          response = await fetch(`${API_BASE}/api/credits`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+        }
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch credits");
+        }
+
+        const data = await response.json();
+        setCredits(data.credits);
+        setIsLogged(true);
+      } catch (error) {
+        console.error("Session expired:", error);
+        setIsLogged(false);
+        setCredits(0);
+      }
+    };
+
+    syncAuthAndCredits();
+  }, [isLogged]);
+
 
   return (
     <>
@@ -96,6 +153,7 @@ export function Navbar() {
           <div>
             {isLogged ? (
               <button
+              className="px-5 py-1.5 rounded-full transition-colors text-xs font-semibold cursor-pointer bg-violet-600 hover:bg-violet-700 text-white shadow-xs"
                 onClick={() => {
                   console.log("Logout button clicked!");
                   handleLogOut();
