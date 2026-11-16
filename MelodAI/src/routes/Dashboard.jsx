@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/Dashboard')({
   component: Dashboard,
@@ -10,6 +10,8 @@ export function Dashboard() {
     const [error, setError] = useState(null);
     const [playingId, setPlayingId] = useState(null);
     const http = import.meta.env.VITE_HTTP;
+
+    const navigate = useNavigate();
     
     // Reference to keep track of the currently playing HTML5 audio object
     const audioRef = useRef(null);
@@ -81,6 +83,7 @@ export function Dashboard() {
 
     const handleCreateMusic = () => {
         // alert("Redirecting to Music Creation / Generation Studio...");
+        navigate({to: "/CreateMusic"});
     };
 
     if (loading) {
