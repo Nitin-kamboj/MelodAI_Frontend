@@ -82,7 +82,6 @@ export function Dashboard() {
     };
 
     const handleCreateMusic = () => {
-        // alert("Redirecting to Music Creation / Generation Studio...");
         navigate({to: "/CreateMusic"});
     };
 

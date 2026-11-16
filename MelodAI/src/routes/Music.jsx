@@ -53,8 +53,6 @@ export function Music() {
     };
 
     const handleCreateMusic = () => {
-        // Redirect or trigger your creation studio modal/page here
-        // alert("Redirecting to Music Creation Studio...");
         navigate({ to: '/CreateMusic' });
     };
 
